@@ -1,0 +1,25 @@
+{
+	"fields": {
+		"research": {
+			"title": "research or not?",
+			"items": {
+				"fields":{
+		"locations": {
+			"title": "locations",
+			"items": {
+				"fields": {
+					 "hemisphere": {
+						"title": "hemisphere",
+						"values": [
+						    "north",
+							"south"
+						]
+					}
+              }
+			}
+		}
+	}
+}
+}
+}
+}
