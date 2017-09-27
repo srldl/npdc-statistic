@@ -4,43 +4,29 @@ var npdcCommon = require('npdc-common');
 var AutoConfig = npdcCommon.AutoConfig;
 
 var angular = require('angular');
+var Highcharts = require('highcharts');
 
-var npdcStatisticApp = angular.module('npdcStatisticApp', ['npdcCommon']);
+// Load module after Highcharts is loaded
+require('highcharts/modules/exporting')(Highcharts);
+require('npdc-common/src/wrappers/leaflet');
+
+var npdcStatisticApp = angular.module('npdcStatisticApp', ['npdcCommon', 'leaflet']).value('Highcharts', Highcharts);
+
+npdcStatisticApp.controller('StatisticShowController', require('./show/StatisticShowController'));
+npdcStatisticApp.controller('StatShowController', require('./show/StatShowController'));
+npdcStatisticApp.factory('StatisticSearchService', require('./show/StatisticSearchService'));
+npdcStatisticApp.factory('StatisticJSONService', require('./show/StatisticJSONService'));
+npdcStatisticApp.directive('hcPieChart', require('./show/hcPieChart'));
+npdcStatisticApp.directive('hcBarChart', require('./show/hcBarChart'));
 
 
-
-npdcStatisticApp.controller('StatisticShowController', require('./search/StatisticShowController'));
-npdcStatisticApp.factory('StatisticSearchService', require('./search/StatisticSearchService'));
-npdcStatisticApp.factory('Statistic', require('./Statistic.js'));
-
-npdcStatisticApp.directive('xchronopic', function($timeout) {
-  return {
-    restrict: 'A',
-    require: '?ngModel',
-    link: function(scope, elem, attrs, model) {
-      var cp = new Chronopic(elem[0], {
-        className: '.chronopic.chronopic-ext-md',
-        format: '{date}',
-        onChange: function(element, value) {
-          $timeout(() => {
-            var isoDate = value.toISOString();
-            model.$viewValue = scope[attrs.ngModel] = isoDate;
-          });
-        }
-      });
-
-      scope.$on('npolar-lang', (e, lang) => {
-        cp.locale = lang.lang;
-      });
-    }
-  };
-});
 
 // Bootstrap ngResource models using NpolarApiResource
 var resources = [
   {'path': '/', 'resource': 'NpolarApi'},
   {'path': '/user', 'resource': 'User'},
-  {'path': '/statistic', 'resource': 'StatisticResource'}
+  {'path': '/expedition', 'resource': 'Expedition'},
+  {'path': '/statistic', 'resource': 'Statistic'}
 ];
 
 resources.forEach(service => {
@@ -69,7 +55,7 @@ npdcStatisticApp.config(($httpProvider, npolarApiConfig) => {
 });
 
 npdcStatisticApp.run(($http, npdcAppConfig, NpolarTranslate, NpolarLang) => {
-  //npdcAppConfig.help = {uri: 'https://github.com/npolar/npdc-statistic/wiki' };
+  npdcAppConfig.help = {uri: 'https://github.com/npolar/npdc-statistic/wiki' };
   NpolarTranslate.loadBundles('npdc-statistic');
   npdcAppConfig.toolbarTitle = 'Statistics';
 });

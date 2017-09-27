@@ -7,8 +7,8 @@ var router = function ($routeProvider, $locationProvider) {
   $locationProvider.html5Mode(true).hashPrefix('!');
 
   $routeProvider.when('/', {
-    templateUrl: 'search/search.html',
-    controller: 'StatisticShowController',
+    templateUrl: 'show/stat.html',
+    controller: 'StatShowController',
     reloadOnSearch: false
   });
 };

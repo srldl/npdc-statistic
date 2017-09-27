@@ -18,6 +18,7 @@ https://browser-update.org/update.min.js
 /assets/npdc-common-4.10.12.css
 /assets/npdc-common-4.10.css
 /assets/npdc-common-4.css
+/assets/npdc-common-HEAD-latest.css
 /assets/npdc-common-master-latest.css
 /assets/npdc-common.css
 /statistic/app.js
@@ -116,4 +117,4 @@ NETWORK:
 SETTINGS:
 prefer-online
 
-# hash: 80921b6e9d260a2e02e463120a586950dbaede6f4c57082eed74382b4b54b7b0
+# hash: 7037e2d9f8b698f529a5c91035c45a610bfae8edc47dc979a4471f59647061c5

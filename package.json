@@ -11,6 +11,7 @@
   "private": true,
   "repository": "https://github.com/npolar/npdc-statistic",
   "dependencies": {
+    "highcharts":"^5.0.10",
     "npdc-common": "github:npolar/npdc-common#v4.10.12"
   },
   "devDependencies": {
