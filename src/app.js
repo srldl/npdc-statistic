@@ -12,8 +12,8 @@ require('npdc-common/src/wrappers/leaflet');
 
 var npdcStatisticApp = angular.module('npdcStatisticApp', ['npdcCommon', 'leaflet']).value('Highcharts', Highcharts);
 
+
 npdcStatisticApp.controller('StatisticShowController', require('./show/StatisticShowController'));
-npdcStatisticApp.controller('StatShowController', require('./show/StatShowController'));
 npdcStatisticApp.factory('StatisticSearchService', require('./show/StatisticSearchService'));
 npdcStatisticApp.factory('StatisticJSONService', require('./show/StatisticJSONService'));
 npdcStatisticApp.directive('hcPieChart', require('./show/hcPieChart'));

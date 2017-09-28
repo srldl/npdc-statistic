@@ -5,77 +5,132 @@
  * @ngInject
  */
 var StatisticShowController = function ($scope, $controller, $q, $routeParams,
-  Statistic, Inventory, Dataset, Project, Publication, npdcAppConfig) {
+  Statistic, npdcAppConfig, StatisticSearchService, StatisticJSONService, chronopicService) {
    'ngInject';
 
   $controller('NpolarBaseController', {$scope: $scope});
   $scope.resource = Statistic;
 
-  //Some fields should not be shown unless you are logged in
-  $scope.isLoggedInAs = function() {
-    return ($scope.security.getUser().email);
-  };
+  //Define link path
+  var href = window.location.href;
+  //Remove last part of link
+  var href1 = href.split('/stat');
+  $scope.root_path = href1[0];
+
+  //Chronopic input values
+  $scope.start_date = null;
+  $scope.end_date = null;
 
 
-  $scope.mapOptions = {};
-
-  let show = function() {
-    $scope.show().$promise.then((statistic) => {
-
-
-      if (statistic.locations) {
-         let bounds = (statistic.locations).map((locations) => [[locations.south, locations.west], [locations.north, locations.east]]);
-         $scope.mapOptions.coverage = bounds;
-         $scope.mapOptions.geojson = "geojson";
-      }
-
-      var pi = [];
-       //Convert from camelCase to human readable
-      for(var a=0; a<($scope.document.people).length; a++){
-         for(var b=0; b<($scope.document.people[a].roles).length; b++){
-            if ($scope.document.people[a].roles[b] === 'expedition/cruise leader'){
-                             pi.push($scope.document.people[a]);
-            }
-      }}
-      $scope.pi = pi;
-
-      //Convert from camelCase to human readable
-      for(var j=0; j<($scope.document.activity).length; j++){
-         $scope.document.activity[j].activity_type = convert($scope.document.activity[j].activity_type);
-      }
-
-      //Convert from camelCase to human readable
-      for(var i=0; i<($scope.document.people).length; i++){
-      	 for(var k=0; k<($scope.document.people[i].roles).length; k++){
-         $scope.document.people[i].roles[k] = convert($scope.document.people[i].roles[k]);
-      }}
-
-    });
-
-  };
-
-
-  show();
-
-};
+    // Sample data for pie chart
+                $scope.pieData = [{
+                        name: "Fieldwork",
+                        y: 56.33
+                    }, {
+                        name: "Cruise",
+                        y: 24.03,
+                        sliced: true,
+                        selected: true
+                }]
 
 
 
+   // Invoke Chronopic on all datetime input fields using the material css extension
+  new Chronopic('#start_date', {
+    className: '.chronopic.chronopic-ext-md',
+    format: '{date}',
+    onChange: function(element, value) {
+      $scope.start_date = value.toISOString();
+    }
+  });
 
-/* convert from camelCase to lower case text*/
-function convert(str) {
-       var  positions = '';
+  new Chronopic('#end_date', {
+    className: '.chronopic.chronopic-ext-md',
+    format: '{date}',
+    onChange: function(element, value) {
+      $scope.end_date = value.toISOString();
+    }
+  });
 
-       for(var i=0; i<(str).length; i++){
-           if(str[i].match(/[A-Z]/) !== null){
-             positions += " ";
-             positions += str[i].toLowerCase();
-        } else {
-            positions += str[i];
-        }
-      }
-        return positions;
-       }
+
+  //Get submitted dates, search for entries, extract values, push to service
+  $scope.submit = function() {
+
+        //Search the API
+        var link = 'https://api.npolar.no/expedition/?q=&fields=start_date,end_date,people,locations&sort=';
+        var link2 = '&filter-start_date=' + $scope.start_date + '..' + $scope.end_date;
+        var link3 = '&filter-end_date=' + $scope.start_date + '..' + $scope.end_date;
+
+         //Fetch search result
+        StatisticSearchService.getValues(link+link2+link3).then(
+              function(results) {
+                  // on success
+                  $scope.query2 = EstStats(results.data);
+                  console.log("-------");
+                  var doc = [{
+                        name: "Microsoft Internet Explorer",
+                        y: 56.33
+                    }, {
+                        name: "Chrome",
+                        y: 24.03,
+                        sliced: true,
+                        selected: true
+                    }, {
+                        name: "Firefox",
+                        y: 10.38
+                    }, {
+                        name: "Safari",
+                        y: 4.77
+                    }, {
+                        name: "Opera",
+                        y: 0.91
+                    }, {
+                        name: "Proprietary or Undetectable",
+                        y: 0.2
+                }];
+                  StatisticJSONService.entryObject = doc;
+                  console.log(StatisticJSONService.entryObject);
+                  console.log("Getjson");
+        });
+  }; //Submit
+
+
+
+ };
+
+
+
+/* Estimate the diagram values */
+function EstStats(data) {
+
+           //Summarize the date results
+           var num = (data.feed.entries).length;
+
+           //type_arr holds all dates for type (cruise or fieldwork)
+           var type_arr = Array.apply(null, Array(2)).map(Number.prototype.valueOf,0);
+
+           for (var i = 0; i < num; i++) {
+              var entry = data.feed.entries[i];
+
+              // var activity_arr = [];
+              let t_arr = entry.type === 'cruise' ?  0 : 1;
+
+              //Find date diff between start and end date
+              var diff =  Math.floor( ((Date.parse(entry.end_date)) - (Date.parse(entry.start_date))) / 86400000);
+
+              //If people listed
+              if (typeof entry.people !== 'undefined') {
+                //Traverse through people
+                for (var j = 0; j < entry.people.length; j++) {
+                  type_arr[t_arr] =  type_arr[t_arr] + diff;
+                } //for j
+              }
+
+          } //for i
+        return type_arr;
+}
+
+
 
 module.exports = StatisticShowController;
 

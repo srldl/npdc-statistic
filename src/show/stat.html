@@ -1,15 +1,12 @@
 <!DOCTYPE html>
 
-<span class="npdc-crumbs-container">
-    <span ng-if="!$last">
-      <a ng-href="/statistic" title="{{ 'back' | t}}"> {{ 'back' | t }} </a> &nbsp;&nbsp;
-    </span>
-</span>
+
 <br /><br />
 
 
     <label for="start_date">&nbsp;&nbsp;Start date:</label>
     <input id="start_date" type="text" required/>
+     <label for="start_date">&nbsp;&nbsp;End date:</label>
     <input id="end_date" type="text" required/>
     <button ng-click="submit()">Submit</button>
 

@@ -8,7 +8,7 @@ var router = function ($routeProvider, $locationProvider) {
 
   $routeProvider.when('/', {
     templateUrl: 'show/stat.html',
-    controller: 'StatShowController',
+    controller: 'StatisticShowController',
     reloadOnSearch: false
   });
 };
