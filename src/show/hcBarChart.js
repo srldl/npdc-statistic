@@ -1,6 +1,6 @@
 "use strict";
 
-var hcBarChart = function (Highcharts) {
+var hcBarChart = function (Highcharts,StatisticJSONService) {
  // Directive for pie charts, pass in title and data only
                 return {
                     restrict: 'E',
@@ -49,6 +49,6 @@ var hcBarChart = function (Highcharts) {
                 };
 };
 
-hcBarChart.$inject = ['Highcharts'];
+hcBarChart.$inject = ['Highcharts','StatisticJSONService'];
 
 module.exports = hcBarChart;

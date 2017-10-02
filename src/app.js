@@ -18,7 +18,7 @@ npdcStatisticApp.factory('StatisticSearchService', require('./show/StatisticSear
 npdcStatisticApp.factory('StatisticJSONService', require('./show/StatisticJSONService'));
 npdcStatisticApp.directive('hcPieChart', require('./show/hcPieChart'));
 npdcStatisticApp.directive('hcBarChart', require('./show/hcBarChart'));
-
+npdcStatisticApp.directive('hcChart', require('./show/hcChart'));
 
 
 // Bootstrap ngResource models using NpolarApiResource

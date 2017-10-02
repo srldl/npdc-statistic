@@ -11,28 +11,43 @@ var StatisticShowController = function ($scope, $controller, $q, $routeParams,
   $controller('NpolarBaseController', {$scope: $scope});
   $scope.resource = Statistic;
 
-  //Define link path
-  var href = window.location.href;
-  //Remove last part of link
-  var href1 = href.split('/stat');
-  $scope.root_path = href1[0];
+  var id = "d9f287b7b7fd667d175b5a6028026ce7";
+
+  //Set link for now - demo purposes
+  var link = "http://api-test.data.npolar.no/statistic/" + id;
+
+  //Configuration object
+  var config = {};
+
+  //Fetch result which is the config
+  StatisticSearchService.getValues(link).then(
+        function(results) {
+            // on success
+            config = results.data;
+            console.log(results.data);
+
+            //Return title and subtitle
+            $scope.main_title = config.main_title;
+            $scope.main_subtitle = config.main_subtitle;
+  }); //end getValues
+
 
   //Chronopic input values
   $scope.start_date = null;
   $scope.end_date = null;
 
 
-    // Sample data for pie chart
-                $scope.pieData = [{
-                        name: "Fieldwork",
-                        y: 56.33
-                    }, {
-                        name: "Cruise",
-                        y: 24.03,
-                        sliced: true,
-                        selected: true
-                }]
 
+         // Sample data for pie chart
+  $scope.pieData = [{
+            name: "Fieldwork",
+            y: 56.33
+      }, {
+            name: "Cruise",
+            y: 24.03,
+            sliced: true,
+            selected: true
+  }];
 
 
    // Invoke Chronopic on all datetime input fields using the material css extension
@@ -55,18 +70,29 @@ var StatisticShowController = function ($scope, $controller, $q, $routeParams,
 
   //Get submitted dates, search for entries, extract values, push to service
   $scope.submit = function() {
+     console.log($scope);
+        console.log("------");
 
         //Search the API
-        var link = 'https://api.npolar.no/expedition/?q=&fields=start_date,end_date,people,locations&sort=';
-        var link2 = '&filter-start_date=' + $scope.start_date + '..' + $scope.end_date;
-        var link3 = '&filter-end_date=' + $scope.start_date + '..' + $scope.end_date;
+        var link = 'https://api.npolar.no/expedition/?q=&fields=start_date,end_date,people,locations';
+
+        if ($scope.start_date && $scope.end_date) {
+           var link2 = '&filter-start_date=' + $scope.start_date + '..' + $scope.end_date;
+           var link3 = '&filter-end_date=' + $scope.start_date + '..' + $scope.end_date;
+           link = link + link2 + link3;
+        }
+
+        console.log(link);
+
 
          //Fetch search result
-        StatisticSearchService.getValues(link+link2+link3).then(
+        StatisticSearchService.getValues(link).then(
               function(results) {
                   // on success
+                  console.log(results.data);
+
                   $scope.query2 = EstStats(results.data);
-                  console.log("-------");
+
                   var doc = [{
                         name: "Microsoft Internet Explorer",
                         y: 56.33
@@ -88,10 +114,16 @@ var StatisticShowController = function ($scope, $controller, $q, $routeParams,
                         name: "Proprietary or Undetectable",
                         y: 0.2
                 }];
-                  StatisticJSONService.entryObject = doc;
-                  console.log(StatisticJSONService.entryObject);
-                  console.log("Getjson");
+                //  StatisticJSONService.entryObject = doc;
+                 // $scope.barData = doc;
+                  console.log($scope);
+                  console.log("Getjson------");
         });
+
+
+    //$scope.barData = StatisticJSONService.entryObject;
+     console.log("Getjson2");
+
   }; //Submit
 
 
